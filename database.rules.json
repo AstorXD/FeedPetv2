@@ -1,0 +1,14 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": true,
+    "feeding_history": {
+      ".indexOn": ["timestamp"]
+    },
+    "settings": {
+      "schedule": {
+        ".indexOn": ["updatedAt"]
+      }
+    }
+  }
+}
