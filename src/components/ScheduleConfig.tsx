@@ -81,3 +81,5 @@ const ScheduleConfig: React.FC = () => {
     </Card>
   );
 };
+
+export default ScheduleConfig
