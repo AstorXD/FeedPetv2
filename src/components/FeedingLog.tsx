@@ -7,10 +7,10 @@ const FeedingLog: React.FC = () => {
   const { feedingHistory } = useContext(PetFeederContext);
 
   return (
-    <Card title="Feeding History">
+    <Card title="Histórico de Alimentação">
       <div className="max-h-96 overflow-y-auto pr-1">
         {feedingHistory.length === 0 ? (
-          <p className="text-gray-500 text-sm italic">No feeding history available</p>
+          <p className="text-gray-500 text-sm italic">Nenhum histórico disponível</p>
         ) : (
           <div className="relative pl-6 border-l-2 border-gray-200 space-y-4">
             {feedingHistory.map((item, index) => (
@@ -24,7 +24,7 @@ const FeedingLog: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-xs text-gray-600">
-                    Released: <span className="font-semibold">{item.amount}g</span>
+                    Quantidade: <span className="font-semibold">{item.amount}g</span>
                   </p>
                 </div>
               </div>
@@ -35,5 +35,3 @@ const FeedingLog: React.FC = () => {
     </Card>
   );
 };
-
-export default FeedingLog;

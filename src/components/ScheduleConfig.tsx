@@ -11,13 +11,12 @@ const ScheduleConfig: React.FC = () => {
 
   const handleAddSchedule = () => {
     if (!newTime) {
-      setError('Please select a time');
+      setError('Por favor, selecione um horário');
       return;
     }
 
-    // Check for duplicate
     if (schedule.includes(newTime)) {
-      setError('This time is already scheduled');
+      setError('Este horário já está agendado');
       return;
     }
 
@@ -27,7 +26,7 @@ const ScheduleConfig: React.FC = () => {
   };
 
   return (
-    <Card title="Feeding Schedule">
+    <Card title="Configuração de Horários">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex-grow">
@@ -44,14 +43,14 @@ const ScheduleConfig: React.FC = () => {
             className="bg-blue-500 hover:bg-blue-600 text-white"
           >
             <PlusCircle size={16} />
-            <span>Add Time</span>
+            <span>Adicionar Horário</span>
           </Button>
         </div>
 
         <div className="mt-4 mb-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Scheduled Times</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Horários Agendados</h3>
           {schedule.length === 0 ? (
-            <p className="text-gray-500 text-sm italic">No feeding times scheduled</p>
+            <p className="text-gray-500 text-sm italic">Nenhum horário agendado</p>
           ) : (
             <ul className="space-y-2 max-h-72 overflow-y-auto pr-2">
               {schedule.sort().map((time) => (
@@ -75,12 +74,10 @@ const ScheduleConfig: React.FC = () => {
             className="bg-green-500 hover:bg-green-600 text-white"
           >
             <Save size={16} />
-            <span>Save Schedule</span>
+            <span>Salvar Horários</span>
           </Button>
         </div>
       </div>
     </Card>
   );
 };
-
-export default ScheduleConfig;

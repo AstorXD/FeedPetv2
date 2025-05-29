@@ -5,11 +5,6 @@ import Card from './ui/Card';
 import ProgressBar from './ui/ProgressBar';
 import Button from './ui/Button';
 
-interface ProgressBarProps {
-  value: number;
-  className?: string;
-}
-
 const SystemInfo: React.FC = () => {
   const { systemInfo, exportData } = useContext(PetFeederContext);
 
@@ -32,16 +27,16 @@ const SystemInfo: React.FC = () => {
   };
 
   return (
-    <Card title="System Information">
+    <Card title="Informações do Sistema">
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
             <div className="flex items-center gap-2 mb-2">
               <Cpu size={18} className="text-blue-500" />
-              <h3 className="text-sm font-medium text-gray-700">CPU Usage</h3>
+              <h3 className="text-sm font-medium text-gray-700">Uso da CPU</h3>
             </div>
             <div className="mb-1 flex justify-between">
-              <span className="text-xs text-gray-500">Usage</span>
+              <span className="text-xs text-gray-500">Uso</span>
               <span className="text-xs font-medium">{systemInfo.cpuUsage}%</span>
             </div>
             <ProgressBar 
@@ -53,10 +48,10 @@ const SystemInfo: React.FC = () => {
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
             <div className="flex items-center gap-2 mb-2">
               <Memory size={18} className="text-purple-500" />
-              <h3 className="text-sm font-medium text-gray-700">RAM Usage</h3>
+              <h3 className="text-sm font-medium text-gray-700">Uso da RAM</h3>
             </div>
             <div className="mb-1 flex justify-between">
-              <span className="text-xs text-gray-500">Usage</span>
+              <span className="text-xs text-gray-500">Uso</span>
               <span className="text-xs font-medium">{systemInfo.ramUsage}%</span>
             </div>
             <ProgressBar 
@@ -68,7 +63,7 @@ const SystemInfo: React.FC = () => {
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
             <div className="flex items-center gap-2 mb-2">
               <Thermometer size={18} className="text-orange-500" />
-              <h3 className="text-sm font-medium text-gray-700">Temperature</h3>
+              <h3 className="text-sm font-medium text-gray-700">Temperatura</h3>
             </div>
             <div className="flex items-end justify-between">
               <div className="text-3xl font-bold leading-none mt-2">
@@ -78,8 +73,8 @@ const SystemInfo: React.FC = () => {
                 <span className="text-lg font-normal text-gray-500">°C</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-500">Max: 85°C</span>
-                <span className="text-xs text-gray-500">Min: 20°C</span>
+                <span className="text-xs text-gray-500">Máx: 85°C</span>
+                <span className="text-xs text-gray-500">Mín: 20°C</span>
               </div>
             </div>
           </div>
@@ -87,7 +82,7 @@ const SystemInfo: React.FC = () => {
           <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100">
             <div className="flex items-center gap-2 mb-2">
               <Signal size={18} className="text-teal-500" />
-              <h3 className="text-sm font-medium text-gray-700">Latency</h3>
+              <h3 className="text-sm font-medium text-gray-700">Latência</h3>
             </div>
             <div className="flex items-end justify-between">
               <div className="text-3xl font-bold leading-none mt-2">
@@ -97,8 +92,8 @@ const SystemInfo: React.FC = () => {
                 <span className="text-lg font-normal text-gray-500">ms</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-500">Peak: 350ms</span>
-                <span className="text-xs text-gray-500">Avg: 120ms</span>
+                <span className="text-xs text-gray-500">Pico: 350ms</span>
+                <span className="text-xs text-gray-500">Média: 120ms</span>
               </div>
             </div>
           </div>
@@ -110,12 +105,10 @@ const SystemInfo: React.FC = () => {
             className="bg-blue-500 hover:bg-blue-600 text-white"
           >
             <Download size={16} />
-            <span>Export Data</span>
+            <span>Exportar Dados</span>
           </Button>
         </div>
       </div>
     </Card>
   );
 };
-
-export default SystemInfo;
