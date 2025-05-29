@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Wifi, WifiOff, Paw } from 'lucide-react';
+import { Wifi, WifiOff, PawPrint as Paw } from 'lucide-react';
 import { PetFeederContext } from '../context/PetFeederContext';
 
 const Header: React.FC = () => {
