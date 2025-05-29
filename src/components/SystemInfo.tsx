@@ -112,3 +112,5 @@ const SystemInfo: React.FC = () => {
     </Card>
   );
 };
+
+export default SystemInfo

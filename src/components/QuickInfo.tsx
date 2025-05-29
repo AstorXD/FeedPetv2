@@ -42,3 +42,5 @@ const QuickInfo: React.FC = () => {
     </Card>
   );
 };
+
+export default QuickInfo
