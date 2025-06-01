@@ -8,7 +8,9 @@ import {
   query,
   limitToLast,
   orderByChild,
-  get
+  get,
+  DatabaseReference,
+  DataSnapshot
 } from 'firebase/database';
 import { db } from '../firebase/config';
 import { formatTime, formatDate } from '../utils/dateHelpers';
@@ -50,7 +52,7 @@ export const PetFeederContext = createContext<PetFeederContextType>({
 });
 
 export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children }) => {
-  const [deviceStatus, setDeviceStatus] = useState<'online' | 'offline'>('online');
+  const [deviceStatus, setDeviceStatus] = useState<'online' | 'offline'>('offline');
   const [schedule, setSchedule] = useState<string[]>([]);
   const [feedingHistory, setFeedingHistory] = useState<FeedingHistoryItem[]>([]);
   const [systemInfo, setSystemInfo] = useState<SystemInfoData>({
@@ -62,6 +64,16 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
 
   // Subscribe to real-time updates
   useEffect(() => {
+    const connectedRef = ref(db, '.info/connected');
+    
+    const unsubConnection = onValue(connectedRef, (snap) => {
+      if (snap.val() === true) {
+        setDeviceStatus('online');
+      } else {
+        setDeviceStatus('offline');
+      }
+    });
+
     // Subscribe to feeding history
     const historyRef = query(
       ref(db, 'feeding_history'),
@@ -85,9 +97,6 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
     const unsubSystem = onValue(systemRef, (snapshot) => {
       if (snapshot.exists()) {
         setSystemInfo(snapshot.val());
-        setDeviceStatus('online');
-      } else {
-        setDeviceStatus('offline');
       }
     });
 
@@ -100,6 +109,7 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
     });
 
     return () => {
+      unsubConnection();
       unsubHistory();
       unsubSystem();
       unsubSchedule();
