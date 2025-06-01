@@ -92,8 +92,8 @@ const SystemInfo: React.FC = () => {
                 <span className="text-lg font-normal text-gray-500">ms</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-500">Pico: 350ms</span>
-                <span className="text-xs text-gray-500">Média: 120ms</span>
+                <span className="text-xs text-gray-500">Pico: 150ms</span>
+                <span className="text-xs text-gray-500">Média: 70ms</span>
               </div>
             </div>
           </div>
