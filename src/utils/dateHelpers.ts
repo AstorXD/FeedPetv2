@@ -7,8 +7,8 @@ export const formatTime = (date: Date): string => {
 };
 
 export const formatDate = (date: Date): string => {
-  return date.toLocaleDateString('en-US', { 
-    month: 'short',
-    day: 'numeric'
+  return date.toLocaleDateString('pt-BR', { 
+    day: 'numeric',
+    month: 'short'
   });
 };

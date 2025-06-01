@@ -11,7 +11,7 @@ import {
   get
 } from 'firebase/database';
 import { db } from '../firebase/config';
-import { formatTime } from '../utils/dateHelpers';
+import { formatTime, formatDate } from '../utils/dateHelpers';
 import { 
   FeedingHistoryItem, 
   SystemInfoData, 
@@ -113,16 +113,35 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
       }
     : null;
 
-  const currentTime = formatTime(new Date());
-  const sortedSchedule = [...schedule].sort();
-  const nextScheduledTime = sortedSchedule.find(time => time > currentTime) || sortedSchedule[0];
-  
-  const nextFeeding = schedule.length > 0
-    ? {
-        time: nextScheduledTime,
-        date: 'Today'
-      }
-    : null;
+  const getNextFeeding = (): FeedingTimeInfo | null => {
+    if (schedule.length === 0) return null;
+
+    const now = new Date();
+    const currentTime = formatTime(now);
+    const today = formatDate(now);
+    const tomorrow = formatDate(new Date(now.getTime() + 24 * 60 * 60 * 1000));
+
+    // Sort schedule times
+    const sortedSchedule = [...schedule].sort();
+    
+    // Find the next feeding time today
+    const nextTodayTime = sortedSchedule.find(time => time > currentTime);
+    
+    if (nextTodayTime) {
+      return {
+        time: nextTodayTime,
+        date: today
+      };
+    }
+    
+    // If no more feedings today, return first feeding tomorrow
+    return {
+      time: sortedSchedule[0],
+      date: tomorrow
+    };
+  };
+
+  const nextFeeding = getNextFeeding();
 
   const addSchedule = async (time: string) => {
     const newSchedule = [...schedule, time].sort();
@@ -146,10 +165,10 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
         times: schedule,
         updatedAt: Date.now()
       });
-      alert('Feeding schedule saved successfully!');
+      alert('Horários de alimentação salvos com sucesso!');
     } catch (error) {
       console.error('Error saving schedule:', error);
-      alert('Failed to save schedule. Please try again.');
+      alert('Falha ao salvar horários. Por favor, tente novamente.');
     }
   };
 
@@ -179,7 +198,7 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error exporting data:', error);
-      alert('Failed to export data. Please try again.');
+      alert('Falha ao exportar dados. Por favor, tente novamente.');
     }
   };
 
