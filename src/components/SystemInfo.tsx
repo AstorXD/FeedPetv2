@@ -9,7 +9,7 @@ const SystemInfo: React.FC = () => {
   const { systemInfo, exportData } = useContext(PetFeederContext);
 
   const getProgressColor = (value: number) => {
-    if (value < 50) return 'bg-green-500';
+    if (value < 55) return 'bg-green-500';
     if (value < 80) return 'bg-yellow-500';
     return 'bg-red-500';
   };
