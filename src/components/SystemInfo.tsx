@@ -15,14 +15,14 @@ const SystemInfo: React.FC = () => {
   };
 
   const getTemperatureColor = (temp: number) => {
-    if (temp < 50) return 'text-green-500';
-    if (temp < 70) return 'text-yellow-500';
+    if (temp < 65) return 'text-green-500';
+    if (temp < 75) return 'text-yellow-500';
     return 'text-red-500';
   };
 
   const getLatencyColor = (latency: number) => {
-    if (latency < 100) return 'text-green-500';
-    if (latency < 300) return 'text-yellow-500';
+    if (latency < 350) return 'text-green-500';
+    if (latency < 500) return 'text-yellow-500';
     return 'text-red-500';
   };
 
@@ -74,7 +74,7 @@ const SystemInfo: React.FC = () => {
               </div>
               <div className="flex flex-col items-end">
                 <span className="text-xs text-gray-500">Máx: 85°C</span>
-                <span className="text-xs text-gray-500">Mín: 20°C</span>
+                <span className="text-xs text-gray-500">Mín: 40°C</span>
               </div>
             </div>
           </div>
@@ -92,8 +92,8 @@ const SystemInfo: React.FC = () => {
                 <span className="text-lg font-normal text-gray-500">ms</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-xs text-gray-500">Pico: 150ms</span>
-                <span className="text-xs text-gray-500">Média: 70ms</span>
+                <span className="text-xs text-gray-500">Pico: 2000ms</span>
+                <span className="text-xs text-gray-500">Média: 300ms</span>
               </div>
             </div>
           </div>
