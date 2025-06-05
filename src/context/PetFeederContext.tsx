@@ -54,8 +54,8 @@ export const PetFeederContext = createContext<PetFeederContextType>({
 const SCHEDULE_SIZE = 8;
 
 const padScheduleWithEmptySlots = (timeInts: number[]): number[] => {
-  const validTimes = timeInts.filter(t => t !== -1).sort((a, b) => a - b);
-  const emptySlots = Array(SCHEDULE_SIZE - validTimes.length).fill(-1);
+  const validTimes = timeInts.filter(t => t !== 9999).sort((a, b) => a - b);
+  const emptySlots = Array(SCHEDULE_SIZE - validTimes.length).fill(9999);
   return [...validTimes, ...emptySlots];
 };
 
@@ -108,9 +108,9 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
     const scheduleRef = ref(db, 'settings/schedule');
     const unsubSchedule = onValue(scheduleRef, (snapshot) => {
       if (snapshot.exists()) {
-        const timeInts = snapshot.val().times || Array(SCHEDULE_SIZE).fill(-1);
+        const timeInts = snapshot.val().times || Array(SCHEDULE_SIZE).fill(9999);
         const formattedTimes = timeInts
-          .filter((timeInt: number) => timeInt !== -1)
+          .filter((timeInt: number) => timeInt !== 9999)
           .map((timeInt: number) => intToTime(timeInt));
         setSchedule(formattedTimes);
       }
