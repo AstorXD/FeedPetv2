@@ -51,6 +51,14 @@ export const PetFeederContext = createContext<PetFeederContextType>({
   exportData: async () => {}
 });
 
+const SCHEDULE_SIZE = 8;
+
+const padScheduleWithEmptySlots = (timeInts: number[]): number[] => {
+  const validTimes = timeInts.filter(t => t !== -1).sort((a, b) => a - b);
+  const emptySlots = Array(SCHEDULE_SIZE - validTimes.length).fill(-1);
+  return [...validTimes, ...emptySlots];
+};
+
 export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const [deviceStatus, setDeviceStatus] = useState<'online' | 'offline'>('offline');
   const [schedule, setSchedule] = useState<string[]>([]);
@@ -100,7 +108,7 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
     const scheduleRef = ref(db, 'settings/schedule');
     const unsubSchedule = onValue(scheduleRef, (snapshot) => {
       if (snapshot.exists()) {
-        const timeInts = snapshot.val().times || [];
+        const timeInts = snapshot.val().times || Array(SCHEDULE_SIZE).fill(-1);
         const formattedTimes = timeInts
           .filter((timeInt: number) => timeInt !== -1)
           .map((timeInt: number) => intToTime(timeInt));
@@ -151,9 +159,9 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
   const nextFeeding = getNextFeeding();
 
   const addSchedule = async (time: string) => {
-    const timeInt = timeToInt(time || '');
+    const timeInt = timeToInt(time);
     const currentTimeInts = schedule.map(timeToInt);
-    const newSchedule = [...currentTimeInts, timeInt].sort((a, b) => a - b);
+    const newSchedule = padScheduleWithEmptySlots([...currentTimeInts, timeInt]);
     await set(ref(db, 'settings/schedule'), {
       times: newSchedule,
       updatedAt: Date.now()
@@ -162,7 +170,9 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
 
   const removeSchedule = async (time: string) => {
     const timeInt = timeToInt(time);
-    const newSchedule = schedule.map(timeToInt).filter(t => t !== timeInt);
+    const currentTimeInts = schedule.map(timeToInt);
+    const filteredTimes = currentTimeInts.filter(t => t !== timeInt);
+    const newSchedule = padScheduleWithEmptySlots(filteredTimes);
     await set(ref(db, 'settings/schedule'), {
       times: newSchedule,
       updatedAt: Date.now()
@@ -171,9 +181,10 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
 
   const saveSchedule = async () => {
     try {
-      const timeInts = schedule.map(time => timeToInt(time || '')).sort((a, b) => a - b);
+      const timeInts = schedule.map(time => timeToInt(time || ''));
+      const newSchedule = padScheduleWithEmptySlots(timeInts);
       await set(ref(db, 'settings/schedule'), {
-        times: timeInts,
+        times: newSchedule,
         updatedAt: Date.now()
       });
       alert('Horários de alimentação salvos com sucesso!');
@@ -194,7 +205,7 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
       const exportData = {
         feedingHistory: historyData,
         systemInfo: systemData,
-        schedule: schedule.map(time => timeToInt(time || '')),
+        schedule: padScheduleWithEmptySlots(schedule.map(time => timeToInt(time || ''))),
         exportDate: new Date().toISOString()
       };
 
