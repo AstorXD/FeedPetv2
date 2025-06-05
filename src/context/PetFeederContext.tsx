@@ -13,7 +13,7 @@ import {
   DataSnapshot
 } from 'firebase/database';
 import { db } from '../firebase/config';
-import { formatTime, formatDate } from '../utils/dateHelpers';
+import { formatTime, formatDate, timeToInt, intToTime } from '../utils/dateHelpers';
 import { 
   FeedingHistoryItem, 
   SystemInfoData, 
@@ -62,7 +62,6 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
     latency: 0
   });
 
-  // Subscribe to real-time updates
   useEffect(() => {
     const connectedRef = ref(db, '.info/connected');
     
@@ -74,7 +73,6 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
       }
     });
 
-    // Subscribe to feeding history
     const historyRef = query(
       ref(db, 'feeding_history'),
       orderByChild('timestamp'),
@@ -92,7 +90,6 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
       setFeedingHistory(history);
     });
 
-    // Subscribe to system info
     const systemRef = ref(db, 'system_info');
     const unsubSystem = onValue(systemRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -100,11 +97,12 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
       }
     });
 
-    // Subscribe to schedule
     const scheduleRef = ref(db, 'settings/schedule');
     const unsubSchedule = onValue(scheduleRef, (snapshot) => {
       if (snapshot.exists()) {
-        setSchedule(snapshot.val().times || []);
+        const timeInts = snapshot.val().times || [];
+        const formattedTimes = timeInts.map((timeInt: number) => intToTime(timeInt));
+        setSchedule(formattedTimes);
       }
     });
 
@@ -128,25 +126,22 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
 
     const now = new Date();
     const currentTime = formatTime(now);
+    const currentTimeInt = timeToInt(currentTime);
     const today = formatDate(now);
     const tomorrow = formatDate(new Date(now.getTime() + 24 * 60 * 60 * 1000));
 
-    // Sort schedule times
-    const sortedSchedule = [...schedule].sort();
+    const timeInts = schedule.map(timeToInt).sort((a, b) => a - b);
+    const nextTodayTimeInt = timeInts.find(time => time > currentTimeInt);
     
-    // Find the next feeding time today
-    const nextTodayTime = sortedSchedule.find(time => time > currentTime);
-    
-    if (nextTodayTime) {
+    if (nextTodayTimeInt) {
       return {
-        time: nextTodayTime,
+        time: intToTime(nextTodayTimeInt),
         date: today
       };
     }
     
-    // If no more feedings today, return first feeding tomorrow
     return {
-      time: sortedSchedule[0],
+      time: intToTime(timeInts[0]),
       date: tomorrow
     };
   };
@@ -154,7 +149,9 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
   const nextFeeding = getNextFeeding();
 
   const addSchedule = async (time: string) => {
-    const newSchedule = [...schedule, time].sort();
+    const timeInt = timeToInt(time);
+    const currentTimeInts = schedule.map(timeToInt);
+    const newSchedule = [...currentTimeInts, timeInt].sort((a, b) => a - b);
     await set(ref(db, 'settings/schedule'), {
       times: newSchedule,
       updatedAt: Date.now()
@@ -162,7 +159,8 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
   };
 
   const removeSchedule = async (time: string) => {
-    const newSchedule = schedule.filter(t => t !== time);
+    const timeInt = timeToInt(time);
+    const newSchedule = schedule.map(timeToInt).filter(t => t !== timeInt);
     await set(ref(db, 'settings/schedule'), {
       times: newSchedule,
       updatedAt: Date.now()
@@ -171,8 +169,9 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
 
   const saveSchedule = async () => {
     try {
+      const timeInts = schedule.map(timeToInt).sort((a, b) => a - b);
       await set(ref(db, 'settings/schedule'), {
-        times: schedule,
+        times: timeInts,
         updatedAt: Date.now()
       });
       alert('Horários de alimentação salvos com sucesso!');
@@ -193,7 +192,7 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
       const exportData = {
         feedingHistory: historyData,
         systemInfo: systemData,
-        schedule,
+        schedule: schedule.map(timeToInt),
         exportDate: new Date().toISOString()
       };
 
