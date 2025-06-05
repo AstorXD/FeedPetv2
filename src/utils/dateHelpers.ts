@@ -14,11 +14,13 @@ export const formatDate = (date: Date): string => {
 };
 
 export const timeToInt = (time: string): number => {
+  if (!time) return -1;
   const [hours, minutes] = time.split(':');
   return parseInt(hours) * 100 + parseInt(minutes);
 };
 
 export const intToTime = (timeInt: number): string => {
+  if (timeInt === -1) return '';
   const hours = Math.floor(timeInt / 100);
   const minutes = timeInt % 100;
   return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;

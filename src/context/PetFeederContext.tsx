@@ -101,7 +101,9 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
     const unsubSchedule = onValue(scheduleRef, (snapshot) => {
       if (snapshot.exists()) {
         const timeInts = snapshot.val().times || [];
-        const formattedTimes = timeInts.map((timeInt: number) => intToTime(timeInt));
+        const formattedTimes = timeInts
+          .filter((timeInt: number) => timeInt !== -1)
+          .map((timeInt: number) => intToTime(timeInt));
         setSchedule(formattedTimes);
       }
     });
@@ -149,7 +151,7 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
   const nextFeeding = getNextFeeding();
 
   const addSchedule = async (time: string) => {
-    const timeInt = timeToInt(time);
+    const timeInt = timeToInt(time || '');
     const currentTimeInts = schedule.map(timeToInt);
     const newSchedule = [...currentTimeInts, timeInt].sort((a, b) => a - b);
     await set(ref(db, 'settings/schedule'), {
@@ -169,7 +171,7 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
 
   const saveSchedule = async () => {
     try {
-      const timeInts = schedule.map(timeToInt).sort((a, b) => a - b);
+      const timeInts = schedule.map(time => timeToInt(time || '')).sort((a, b) => a - b);
       await set(ref(db, 'settings/schedule'), {
         times: timeInts,
         updatedAt: Date.now()
@@ -192,7 +194,7 @@ export const PetFeederProvider: React.FC<{children: ReactNode}> = ({ children })
       const exportData = {
         feedingHistory: historyData,
         systemInfo: systemData,
-        schedule: schedule.map(timeToInt),
+        schedule: schedule.map(time => timeToInt(time || '')),
         exportDate: new Date().toISOString()
       };
 
