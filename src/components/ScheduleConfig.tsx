@@ -20,6 +20,11 @@ const ScheduleConfig: React.FC = () => {
       return;
     }
 
+    if (schedule.length >= 8) {
+      setError('Limite máximo de 8 horários atingido');
+      return;
+    }
+
     addSchedule(newTime);
     setNewTime('');
     setError('');
@@ -35,12 +40,14 @@ const ScheduleConfig: React.FC = () => {
               value={newTime}
               onChange={(e) => setNewTime(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              disabled={schedule.length >= 8}
             />
             {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
           </div>
           <Button 
             onClick={handleAddSchedule}
             className="bg-blue-500 hover:bg-blue-600 text-white"
+            disabled={schedule.length >= 8}
           >
             <PlusCircle size={16} />
             <span>Adicionar Horário</span>
@@ -48,7 +55,12 @@ const ScheduleConfig: React.FC = () => {
         </div>
 
         <div className="mt-4 mb-6">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Horários Agendados</h3>
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-sm font-medium text-gray-700">Horários Agendados</h3>
+            <span className="text-sm text-gray-500">
+              {schedule.length}/8 horários
+            </span>
+          </div>
           {schedule.length === 0 ? (
             <p className="text-gray-500 text-sm italic">Nenhum horário agendado</p>
           ) : (
